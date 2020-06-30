@@ -2,12 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
-import HelloWorld from './HelloWorld';
-import CountApp from './HelloWorld';
+
+import {CountApp,TodoApp}  from './HelloWorld';
 
 ReactDOM.render(
   <React.StrictMode>
     <CountApp />
+    <TodoApp />
   </React.StrictMode>,
   document.getElementById('root')
 );
