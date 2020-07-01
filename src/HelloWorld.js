@@ -21,7 +21,7 @@ class TodoApp extends React.Component {
             // pushではなくconcatメソッドを使うことでイミュータブルにしている
             // concat() メソッドは、配列に他の配列や値をつないでできた新しい配列を返す
             // ここでは今まであったtodoListにvalueの値をつないで新しい配列を作っている
-            
+
             // 解説
             // concat は、メソッドを呼び出した this オブジェクトの要素に、与えられた引数の要素 (引数が配列である場合) または引数そのもの (引数が配列でない場合) が順に続く、新しい配列オブジェクトを生成します。
             // pushではダメなのかと思う方もいるのではないでしょうか。実は、pushは破壊的メソッドのため、元のthis.state.todoListまで変更してしまいます。これでは、immutableでなくなってしまいます。一方、concatは非破壊的メソッドのため元のstate自体は変更されないのでreactの要件を満たします。
@@ -31,14 +31,13 @@ class TodoApp extends React.Component {
     // stateが更新されるとrender関数が呼ばれるのでtodoListNodeはrenderの中に入れてstateが更新されるたびにtodoListNodeも更新される
 
     render() {
-        const todoListNode = this.state.todoList.map((todo, idx) => {
-            return <li key={idx}>{todo}</li>
-            // この文がvueでいうところのv-for文と同じ役割を果たしている
-            // vueの場合だとこんな感じかな？
-            // <li v-for="(todo,idx) in todos" :key="idx">{{todo}}</li>
-
-            // 解説
-            // reactは、変更を察知して差分で更新を行います。そのため、各要素をreactが判別できなければなりません。そこで、mapなどのループ処理をしたときには、ユニークなkeyを持たせる必要があります。idなどを持たせるのが一般的ですが、今は一旦indexを持たせておきます。（indexで実装するのはほんとはだめ。）あとで、idを持たせるように変更しようと思います。
+        const todoListNode = this.state.todoList.map((content, index) => {
+            return (
+                <TodoElement
+                    key={index}
+                    content={content}
+                />
+            )
         })
 
         return (
@@ -54,6 +53,51 @@ class TodoApp extends React.Component {
                     {todoListNode}
                 </ul>
             </>
+        )
+    }
+}
+
+
+
+const TodoElement = props => {
+    return (
+        <li>
+            {props.content}
+            {/* {this.props.content} */}
+            {/* 上記の文はclassコンポーネントの時の書き方  */}
+        </li>
+    )
+}
+// 関数コンポーネントはstateを保持することができない。
+// propsで親から値をバケツリレーしている
+
+class AddTodo extends React.Component {
+    onChange(e) {
+        this.props.onChange({
+            value: e.target.value,
+        })
+    }
+
+    add() {
+        const todoElement = {
+            content: this.props.value,
+            id: this.props.todoList.length + 1,
+        }
+        this.props.add(todoElement)
+    }
+
+    render() {
+        return (
+            <div>
+                <input
+                    type="text"
+                    value={this.props.value}
+                    onChange={e => this.onChange(e)}
+                />
+                <button onClick={() => this.add()}>
+                    追加
+                </button>
+            </div>
         )
     }
 }
